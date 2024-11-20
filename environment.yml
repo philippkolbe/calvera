@@ -1,0 +1,39 @@
+name: neural_bandits
+channels:
+  - conda-forge
+  - nvidia # nvidia channel for cuda packages
+  # We want to have a reproducible setup, so we don't want default channels,
+  # which may be different for different users. All required channels should
+  # be listed explicitly here.
+  - pytorch
+dependencies:
+  - python=3.10 # or don't specify the version and use latest stable
+  - pytorch
+  - torchvision
+  - wandb
+  # - lightning # PyTorch Lightning? Not sure if we need it
+
+  # Good to have
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+
+  # Misc
+  - tqdm
+
+  # Dev dependencies
+  - black
+  - ruff
+  - isort
+  - mypy
+  - pytest
+
+  # pip dependencies
+  - pip
+  - pip:
+      - simple_parsing
+      - print-on-steroids[exceptions]
+      - wandb[sweeps]
