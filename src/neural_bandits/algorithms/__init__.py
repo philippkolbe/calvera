@@ -1,4 +1,3 @@
-from .bayesian_bandit import LinearBayesianBandit
-from .linucb import LinearUCBBandit
+from .linear_bandits import LinearThompsonBandit, LinearUCBBandit
 
-__all__ = ["LinearBayesianBandit", "LinearUCBBandit"]
+__all__ = ["LinearThompsonBandit", "LinearUCBBandit"]
