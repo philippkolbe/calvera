@@ -15,7 +15,7 @@ class LinearBandit(AbstractBandit):
         self.theta = np.random.uniform(-1, 1, (n_features))
 
     def update_step(
-        self, reward: float, chosen_contextualised_action: npt.NDArray[np.int_]
+        self, reward: float, chosen_contextualised_action: npt.NDArray[np.float64]
     ) -> None:
         self.M += np.outer(chosen_contextualised_action, chosen_contextualised_action)
         self.b += reward * chosen_contextualised_action
@@ -24,7 +24,7 @@ class LinearBandit(AbstractBandit):
     def update_batch(
         self,
         rewards: List[float],
-        chosen_contextualised_actions: List[npt.NDArray[np.int_]],
+        chosen_contextualised_actions: List[npt.NDArray[np.float64]],
     ) -> None:
         self.M += np.sum(
             [
@@ -50,13 +50,13 @@ class LinearTSBandit(LinearBandit):
         super().__init__(n_arms, n_features)
         self.gen = np.random.default_rng()
 
-    def predict(self, feature_vectors: List[npt.NDArray[np.int_]]) -> List[int]:
+    def predict(self, feature_vectors: List[npt.NDArray[np.float64]]) -> List[int]:
         results = []
         for i in range(len(feature_vectors)):
             results.append(self.select_arm(feature_vectors[i]))
         return results
 
-    def select_arm(self, contextualised_actions: npt.NDArray[np.int_]) -> int:
+    def select_arm(self, contextualised_actions: npt.NDArray[np.float64]) -> int:
         theta_tilde = self.gen.multivariate_normal(
             self.theta, np.linalg.inv(self.M)
         )  # shape: (n_arms * n_features)
@@ -76,13 +76,13 @@ class LinearUCBBandit(LinearBandit):
         super().__init__(n_arms, n_features)
         self.alpha = alpha
 
-    def predict(self, feature_vectors: List[npt.NDArray[np.int_]]) -> List[int]:
+    def predict(self, feature_vectors: List[npt.NDArray[np.float64]]) -> List[int]:
         results = []
         for i in range(len(feature_vectors)):
             results.append(self.select_arm(feature_vectors[i]))
         return results
 
-    def select_arm(self, contextualised_actions: npt.NDArray[np.int_]) -> int:
+    def select_arm(self, contextualised_actions: npt.NDArray[np.float64]) -> int:
         M_inv = np.linalg.inv(self.M)
 
         return int(
