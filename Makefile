@@ -1,4 +1,4 @@
-sources = src tests
+sources = src tests examples
 
 .PHONY: format
 format:
@@ -13,7 +13,7 @@ lint:
 
 .PHONY: mypy
 mypy:
-	mypy $(sources) --config-file mypy.ini
+	mypy $(sources)
 
 .PHONY: all
 all:
