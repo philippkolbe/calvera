@@ -1,3 +1,3 @@
-from .bayesian_bandit import BayesianBandit
+from .bayesian_bandit import LinearBayesianBandit
 
-__all__ = ["BayesianBandit"]
+__all__ = ["LinearBayesianBandit"]

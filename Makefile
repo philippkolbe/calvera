@@ -1,4 +1,4 @@
-sources = src tests
+sources = src tests examples
 
 .PHONY: format
 format:
