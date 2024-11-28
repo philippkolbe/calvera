@@ -13,7 +13,7 @@ lint:
 
 .PHONY: mypy
 mypy:
-	mypy $(sources) --config-file mypy.ini
+	mypy $(sources)
 
 .PHONY: all
 all:
