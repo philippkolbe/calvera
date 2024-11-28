@@ -11,6 +11,6 @@ In this project we will develop a Multi-Armed Bandits library in python that spe
 
 
 ## TODOs
-- [] GitHub workflow
+- [ ] GitHub workflow
 - [x] Build small LinUCB on MNIST
-- [] Architecture design
+- [ ] Architecture design

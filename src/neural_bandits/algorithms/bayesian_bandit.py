@@ -29,11 +29,9 @@ class LinearBayesianBandit(AbstractBandit):
         # vectorised implementation
         return int(
             np.argmax(
-                np.sum(
-                    np.reshape(contextualised_actions, (self.n_arms, self.n_features))
-                    * theta_tilde,
-                    axis=1,
-                )
+                np.reshape(contextualised_actions, (self.n_arms, self.n_features))
+                @ theta_tilde,
+                axis=0,
             )
         )
 
