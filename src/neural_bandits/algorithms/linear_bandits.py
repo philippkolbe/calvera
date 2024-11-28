@@ -45,7 +45,7 @@ class LinearBandit(AbstractBandit):
         self.theta = np.linalg.inv(self.M).dot(self.b)
 
 
-class LinearThompsonBandit(LinearBandit):
+class LinearTSBandit(LinearBandit):
     def __init__(self, n_arms: int, n_features: int) -> None:
         super().__init__(n_arms, n_features)
         self.gen = np.random.default_rng()
@@ -98,3 +98,11 @@ class LinearUCBBandit(LinearBandit):
                 axis=0,
             )
         )
+
+
+class LinearTSApproxBandit(LinearTSBandit):  # TODO
+    pass
+
+
+class LinearUCBApproxBandit(LinearUCBBandit):  # TODO
+    pass
