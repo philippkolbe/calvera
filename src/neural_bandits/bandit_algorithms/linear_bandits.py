@@ -57,7 +57,7 @@ class LinearTSBandit(LinearBandit):
         return results
 
     def select_arm(self, contextualised_actions: npt.NDArray[np.float64]) -> int:
-        theta_tilde = self.gen.multivariate_normal(
+        theta_tilde = self.gen.multivariate_normal( # NOTE(rob2u): this line is very slow and should be optimised?
             self.theta, np.linalg.inv(self.M)
         )  # shape: (n_arms * n_features)
 
