@@ -1,5 +1,3 @@
-from typing import List
-
 import torch
 
 from .abtract_contextualiser import AbstractContextualiser
@@ -16,7 +14,8 @@ class MultiClassContextualiser(AbstractContextualiser):
         self.n_classes = n_classes
 
     def contextualise(
-        self, feature_vector: torch.Tensor,
+        self,
+        feature_vector: torch.Tensor,
     ) -> torch.Tensor:
         """Performs the disjoint model contextualisation
 
