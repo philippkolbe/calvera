@@ -5,7 +5,7 @@ import numpy.typing as npt
 
 from .abstract_bandit import AbstractBandit
 
-
+# TODO(rob2u): refactor this stuff to be conform with new structure
 class LinearBandit(AbstractBandit):
     def __init__(self, n_arms: int, n_features: int) -> None:
         super().__init__(n_arms, n_features)
@@ -50,7 +50,7 @@ class LinearTSBandit(LinearBandit):
         super().__init__(n_arms, n_features)
         self.gen = np.random.default_rng()
 
-    def predict(self, feature_vectors: List[npt.NDArray[np.float64]]) -> List[int]:
+    def forward(self, feature_vectors: List[npt.NDArray[np.float64]]) -> List[int]:
         results = []
         for i in range(len(feature_vectors)):
             results.append(self.select_arm(feature_vectors[i]))
@@ -76,7 +76,7 @@ class LinearUCBBandit(LinearBandit):
         super().__init__(n_arms, n_features)
         self.alpha = alpha
 
-    def predict(self, feature_vectors: List[npt.NDArray[np.float64]]) -> List[int]:
+    def forward(self, feature_vectors: List[npt.NDArray[np.float64]]) -> List[int]:
         results = []
         for i in range(len(feature_vectors)):
             results.append(self.select_arm(feature_vectors[i]))
