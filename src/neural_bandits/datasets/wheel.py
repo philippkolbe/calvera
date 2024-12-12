@@ -29,6 +29,9 @@ class WheelBanditDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
         seed: Random seed for reproducibility.
     """
 
+    num_actions: int = 5
+    context_dim: int = 2
+
     def __init__(
         self,
         num_samples: int,
@@ -69,9 +72,6 @@ class WheelBanditDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
             opt_vals: Vector of expected optimal (reward, action) for each context.
         """
 
-        context_dim = 2
-        num_actions = 5
-
         data: list[NDArray[np.float32]] = []
         rewards = []
         opt_actions: list[np.int64] = []
@@ -80,7 +80,7 @@ class WheelBanditDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
         # sample uniform contexts in unit ball
         while len(data) < self.num_samples:
             raw_data = np.random.uniform(
-                -1, 1, (int(self.num_samples / 3), context_dim)
+                -1, 1, (int(self.num_samples / 3), self.context_dim)
             ).astype(np.float32)
 
             for i in range(raw_data.shape[0]):
@@ -93,7 +93,7 @@ class WheelBanditDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
         for i in range(self.num_samples):
             r = [
                 np.random.normal(self.mean_v[j], self.std_v[j])
-                for j in range(num_actions)
+                for j in range(self.num_actions)
             ]
             if np.linalg.norm(contexts[i, :]) > self.delta:
                 # large reward in the right region for the context

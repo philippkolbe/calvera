@@ -15,9 +15,9 @@ class StatlogDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
         download (bool): Whether to download the dataset
     """
 
-    data: Bunch
-    X: NDArray[np.float32]
-    y: NDArray[np.int64]
+    num_actions: int = 7
+    context_size: int = 20
+    num_samples: int = 1000
 
     def __init__(self, root: str = "./data", download: bool = True):
         self.data = fetch_ucirepo(id=144)
@@ -29,5 +29,7 @@ class StatlogDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         X_item = torch.tensor(self.X[idx], dtype=torch.float32)
-        y_item = torch.tensor(self.y[idx], dtype=torch.int64)
+        y_item = torch.zeros(self.num_actions, dtype=torch.float32)
+        y_item[self.y[idx]] = 1.0
+
         return X_item, y_item
