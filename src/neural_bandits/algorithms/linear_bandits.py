@@ -21,9 +21,11 @@ class LinearTSBandit(LinearBandit):
         assert contextualised_actions.shape[1] == self.n_arms and contextualised_actions.shape[2] == self.n_features, "Contextualised actions must have shape (batch_size, n_arms, n_features)"
         batch_size = contextualised_actions.shape[0]
         
-        theta_tilde = torch.distributions.MultivariateNormal(self.theta, torch.inverse(self.M)).sample((batch_size,))  # type: ignore
+        # NOTE(rob2u): We assume a normal prior for the weights (mean = 0, covariance = 0.01 * I)
+        theta_tilde = torch.distributions.MultivariateNormal(self.theta, torch.inverse(self.M) + torch.eye(self.n_features) * 0.1).sample((batch_size,))  # type: ignore
         
-        return torch.argmax(torch.einsum("ijk,ik->ij", contextualised_actions, theta_tilde), dim=1) # TODO
+        result = torch.argmax(torch.einsum("ijk,ik->ij", contextualised_actions, theta_tilde), dim=1)
+        return torch.nn.functional.one_hot(result, num_classes=self.n_arms).reshape(-1, self.n_arms)
 
 
 class LinearUCBBandit(LinearBandit):
@@ -36,13 +38,15 @@ class LinearUCBBandit(LinearBandit):
         
         M_inv = torch.inverse(self.M)
         
-        return torch.argmax(
+        result = torch.argmax(
             torch.einsum("ijk,k->ij", contextualised_actions, self.theta)
             + self.alpha
             * torch.sqrt(
                 torch.einsum("ijk,kl,ijl->ij", contextualised_actions, M_inv, contextualised_actions)
             )
-        ) # TODO
+        )
+        
+        return torch.nn.functional.one_hot(result, num_classes=self.n_arms).reshape(-1, self.n_arms)
 
 class LinearTSApproxBandit(LinearTSBandit):  # TODO
     pass
