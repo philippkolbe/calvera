@@ -1,5 +1,8 @@
 # Architecture Specification of the library
 
+## Overview
+![Architecture UML](./architecture_12_12_2024.drawio.svg)
+
 ## Tasks
 
 ### Datasets
