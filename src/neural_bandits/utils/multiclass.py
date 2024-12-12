@@ -24,10 +24,9 @@ class MultiClassContextualiser(AbstractContextualiser):
             torch.Tensor: Contextualised actions of shape (batch_size, n_arms, n_features * n_arms)
         """
         n_features = feature_vector.shape[1]
-        
+
         contextualised_actions = torch.kron(
-            torch.eye(self.n_arms),
-            feature_vector
+            torch.eye(self.n_arms), feature_vector
         ).reshape(-1, self.n_arms, n_features * self.n_arms)
 
         return contextualised_actions

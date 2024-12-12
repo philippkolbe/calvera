@@ -1,6 +1,7 @@
-from .abstract_trainer import AbstractTrainer
-from ..algorithms.linear_bandits import LinearBandit
 import torch
+
+from ..algorithms.linear_bandits import LinearBandit
+from .abstract_trainer import AbstractTrainer
 
 
 class LinearTrainer(AbstractTrainer[LinearBandit]):
@@ -10,15 +11,14 @@ class LinearTrainer(AbstractTrainer[LinearBandit]):
     def update(
         self,
         bandit: LinearBandit,
-        rewards: torch.Tensor, # shape: (batch_size,)
-        chosen_actions: torch.Tensor, # shape: (batch_size, features)
+        rewards: torch.Tensor,  # shape: (batch_size,)
+        chosen_actions: torch.Tensor,  # shape: (batch_size, features)
     ) -> LinearBandit:
         """Perform an update"""
-        
+
         # Update the bandit
-        bandit.M += chosen_actions.T @ chosen_actions # shape: (features, features)
-        bandit.b += chosen_actions.T @ rewards # shape: (features,)
-        bandit.theta = torch.linalg.solve(bandit.M, bandit.b) # shape: (features,)
-        
+        bandit.M += chosen_actions.T @ chosen_actions  # shape: (features, features)
+        bandit.b += chosen_actions.T @ rewards  # shape: (features,)
+        bandit.theta = torch.linalg.solve(bandit.M, bandit.b)  # shape: (features,)
+
         return bandit
-        
