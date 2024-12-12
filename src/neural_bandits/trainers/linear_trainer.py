@@ -10,14 +10,15 @@ class LinearTrainer(AbstractTrainer[LinearBandit]):
     def update(
         self,
         bandit: LinearBandit,
-        rewards: torch.Tensor,
-        chosen_actions: torch.Tensor,
+        rewards: torch.Tensor, # shape: (batch_size,)
+        chosen_actions: torch.Tensor, # shape: (batch_size, features)
     ) -> LinearBandit:
         """Perform an update"""
         
-        bandit.M += torch.einsum("bj,bk->jk", chosen_actions, chosen_actions)
-        bandit.b += torch.einsum("b,bj->j", rewards, chosen_actions)
-        bandit.theta = torch.inverse(bandit.M) @ bandit.b
+        # Update the bandit
+        bandit.M += chosen_actions.T @ chosen_actions # shape: (features, features)
+        bandit.b += chosen_actions.T @ rewards # shape: (features,)
+        bandit.theta = torch.linalg.solve(bandit.M, bandit.b) # shape: (features,)
         
         return bandit
         

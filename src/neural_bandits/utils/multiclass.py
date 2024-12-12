@@ -25,8 +25,9 @@ class MultiClassContextualiser(AbstractContextualiser):
         """
         n_features = feature_vector.shape[1]
         
-        contextualised_actions = torch.einsum(
-            "bi,kl ->bkil", feature_vector, torch.eye(self.n_arms)
+        contextualised_actions = torch.kron(
+            torch.eye(self.n_arms),
+            feature_vector
         ).reshape(-1, self.n_arms, n_features * self.n_arms)
 
         return contextualised_actions
