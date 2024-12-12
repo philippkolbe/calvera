@@ -1,10 +1,9 @@
-from numpy.typing import NDArray
+from typing import Tuple
+
 import numpy as np
-from sklearn.utils import Bunch
+import torch
 from torch.utils.data import Dataset
 from ucimlrepo import fetch_ucirepo
-import torch
-from typing import Tuple
 
 
 class StatlogDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):

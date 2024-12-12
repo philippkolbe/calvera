@@ -1,9 +1,9 @@
 from typing import Tuple
 
-import torch
-from torch.utils.data import Dataset
 import numpy as np
+import torch
 from numpy.typing import NDArray
+from torch.utils.data import Dataset
 
 
 class WheelBanditDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):

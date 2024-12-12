@@ -1,10 +1,10 @@
 from typing import Tuple
 
 import numpy as np
+import torch
 from sklearn.datasets import fetch_openml
 from sklearn.utils import Bunch
 from torch.utils.data import Dataset
-import torch
 
 
 class MNISTDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):

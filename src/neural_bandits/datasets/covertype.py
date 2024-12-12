@@ -1,9 +1,9 @@
 from typing import Tuple
 
 import numpy as np
+import torch
 from sklearn.datasets import fetch_covtype
 from torch.utils.data import Dataset
-import torch
 
 
 class CovertypeDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
