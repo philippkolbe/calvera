@@ -14,9 +14,6 @@ class StatlogDataset(AbstractDataset):
 
         self.X = torch.tensor(X.values, dtype=torch.float32)
         self.y = torch.tensor(y.values, dtype=torch.long)
-        self.y = (
-            torch.nn.functional.one_hot(self.y - 1, num_classes=7).float().squeeze(1)
-        )
 
     def __len__(self) -> int:
         return len(self.X)

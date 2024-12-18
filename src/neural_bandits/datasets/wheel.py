@@ -67,7 +67,7 @@ def sample_rewards(
         a = x > 0
         b = y > 0
 
-        if (3 - 2 * a + b) == actions[i]:
+        if (3 - 2 * a.float() - b.float()).bool() == actions[i]:
             rewards[i] = r_big[i]
 
     # if below delta, assign medium reward when action 4 is taken
@@ -90,6 +90,7 @@ def get_optimal_actions(contexts: torch.Tensor, delta: float) -> torch.Tensor:
         opt_actions: A tensor of shape (num_samples,) with the indices of the optimal actions.
     """
     num_samples = contexts.size(0)
+    print(contexts.shape)
     norms = torch.norm(contexts, dim=1)
     above_delta = norms > delta
 
@@ -104,9 +105,9 @@ def get_optimal_actions(contexts: torch.Tensor, delta: float) -> torch.Tensor:
     idxs_above = torch.where(above_delta)[0]
     for i in idxs_above:
         x, y = contexts[i, 0], contexts[i, 1]
-        a = x > 0
-        b = y > 0
-        opt_actions[i] = 3 - 2 * a + b
+        a = (x > 0).float()
+        b = (y > 0).float()
+        opt_actions[i] = 3 - 2 * a - b
 
     # If norm <= delta, the optimal action is 4
     idxs_below_eq = torch.where(~above_delta)[0]
