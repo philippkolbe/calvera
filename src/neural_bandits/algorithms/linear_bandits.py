@@ -65,9 +65,9 @@ class LinearUCBBandit(LinearBandit):
         )
 
 
-class LinearTSApproxBandit(LinearTSBandit):  # TODO
+class LinearUCBApproxBandit(LinearUCBBandit):  # TODO
     pass
 
 
-class LinearUCBApproxBandit(LinearUCBBandit):  # TODO
+class LinearTSApproxBandit(LinearTSBandit):  # TODO
     pass
