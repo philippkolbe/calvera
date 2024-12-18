@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from sklearn.datasets import fetch_covtype
 
-from .base_dataset import AbstractDataset
+from .abstract_dataset import AbstractDataset
 
 
 class CovertypeDataset(AbstractDataset):

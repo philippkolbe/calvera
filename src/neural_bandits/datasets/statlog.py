@@ -1,7 +1,7 @@
 import torch
 from ucimlrepo import fetch_ucirepo
 
-from .base_dataset import AbstractDataset
+from .abstract_dataset import AbstractDataset
 
 
 class StatlogDataset(AbstractDataset):

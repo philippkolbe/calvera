@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Generic
 import numpy as np
 import torch
 
-from ..datasets.base_dataset import AbstractDataset
+from ..datasets.abstract_dataset import AbstractDataset
 from ..trainers.abstract_trainer import AbstractTrainer, BanditType
 from ..utils.abtract_contextualiser import AbstractContextualiser
 

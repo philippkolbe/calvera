@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import torch
 
-from .base_dataset import AbstractDataset
+from .abstract_dataset import AbstractDataset
 
 
 def sample_rewards(
