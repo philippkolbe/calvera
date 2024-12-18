@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 import torch
 from sklearn.datasets import fetch_covtype

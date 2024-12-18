@@ -27,4 +27,4 @@ test:
 
 .PHONY: coverage
 coverage:
-	pytest --cov=./src tests/
+	pytest --cov=./src tests/ --cov-fail-under=90

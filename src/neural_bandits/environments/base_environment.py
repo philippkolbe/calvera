@@ -3,7 +3,6 @@ from typing import Any, Callable, Dict, Generic
 
 import numpy as np
 import torch
-from torch.utils.data import Dataset
 
 from ..datasets.base_dataset import AbstractDataset
 from ..trainers.abstract_trainer import AbstractTrainer, BanditType

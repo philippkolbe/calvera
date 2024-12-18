@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import torch
 from ucimlrepo import fetch_ucirepo
 
