@@ -72,7 +72,7 @@ class BaseEnvironment(Generic[BanditType]):
 
             rewards = torch.stack(
                 [
-                    self.dataset.reward(idx, action)
+                    self.dataset.reward(int(idx), action)
                     for idx, action in zip(indices[t : t + batch_size], arms)
                 ]
             ).squeeze(1)
