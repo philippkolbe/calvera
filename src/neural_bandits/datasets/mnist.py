@@ -24,7 +24,6 @@ class MNISTDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
             name="mnist_784",
             version=1,
             data_home=root,
-            download_if_missing=download,
             as_frame=False,
         )
         self.X = self.data.data.astype(np.float32)

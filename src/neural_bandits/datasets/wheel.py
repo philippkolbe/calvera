@@ -129,7 +129,9 @@ class WheelBanditDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
         return self.num_samples
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        x, reward = self.data[idx]
+        x = self.data[idx, : self.context_dim]
+        optimal_action = self.opt[1][idx]
+
         return torch.tensor(x, dtype=torch.float32), torch.tensor(
-            reward, dtype=torch.float32
+            optimal_action, dtype=torch.float32
         )

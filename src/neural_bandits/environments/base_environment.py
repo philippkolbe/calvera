@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import Dataset
 
 from ..trainers.abstract_trainer import AbstractTrainer, BanditType
+from ..utils.abtract_contextualiser import AbstractContextualiser
 
 
 def seed_all(seed: int) -> None:
@@ -26,7 +27,10 @@ class BaseEnvironment(Generic[BanditType]):
         bandit: BanditType,
         trainer: AbstractTrainer[BanditType],
         dataset: Dataset[Tuple[torch.Tensor, torch.Tensor]],
-        reward_fn: Callable[[torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor],
+        contextualiser: AbstractContextualiser | None = None,
+        reward_fn: Callable[
+            [torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
+        ] = lambda x, y, z: (x == y).float(),
         seed: int = 42,
         max_steps: int | None = None,
         log_method: Callable[[Dict[str, Any]], None] = lambda x: None,
@@ -34,6 +38,7 @@ class BaseEnvironment(Generic[BanditType]):
         self.bandit = bandit
         self.dataset = dataset
         self.trainer = trainer
+        self.contextualiser = contextualiser
         self.reward_fn = reward_fn
         self.log = log_method
         self.max_steps = max_steps or len(dataset)  # type: ignore
@@ -53,32 +58,33 @@ class BaseEnvironment(Generic[BanditType]):
         cum_reward = 0.0
 
         for t in range(0, self.max_steps, batch_size):
-            context_list, correct_arm_list = [], []
+            context_list, actual_dist_list = [], []
 
             for idx in indices[t : t + batch_size]:
                 x, y = self.dataset[idx]
                 context_list.append(x)
-                correct_arm_list.append(y)
+                actual_dist_list.append(y)
 
             contexts = torch.stack(context_list)
-            correct_arms = torch.stack(correct_arm_list)
+            contextualised_actions = (
+                self.contextualiser.contextualise(contexts)
+                if self.contextualiser
+                else contexts
+            )
+            actual_dist = torch.stack(actual_dist_list)
 
-            arms = torch.argmax(self.bandit(contexts), dim=-1)
+            pred = self.bandit(contextualised_actions)
+            arms = torch.argmax(pred, dim=-1).float()
             chosen_arms.append(arms)
 
-            rewards = self.reward_fn(arms, correct_arms, contexts)
+            rewards = self.reward_fn(pred, actual_dist, contextualised_actions)
             result_rewards.append(rewards)
             self.bandit = self.trainer.update(
-                self.bandit, rewards=rewards, chosen_actions=arms
-            )
-
-            self.log(
-                {
-                    "t": t,
-                    "arm": arms,
-                    "reward": rewards,
-                    "cumulative_reward": cum_reward + rewards,
-                }
+                self.bandit,
+                rewards=rewards,
+                chosen_actions=contextualised_actions[
+                    torch.arange(len(contextualised_actions)), arms.long()
+                ],
             )
 
             for i in range(len(rewards)):
@@ -86,6 +92,7 @@ class BaseEnvironment(Generic[BanditType]):
                 self.log(
                     {
                         "step": t + i,
+                        "arm": arms[i].item(),
                         "reward": rewards[i].item(),
                         "cumulative_reward": cum_reward,
                     }

@@ -24,5 +24,5 @@ class CovertypeDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         X_item = torch.tensor(self.X[idx], dtype=torch.float32)
         y_item = torch.zeros(self.num_actions, dtype=torch.float32)
-        y_item[self.y[idx]] = 1.0
+        y_item[self.y[idx] - 1] = 1.0
         return X_item, y_item

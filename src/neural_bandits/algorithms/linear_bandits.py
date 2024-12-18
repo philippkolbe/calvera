@@ -57,7 +57,8 @@ class LinearUCBBandit(LinearBandit):
                     M_inv,
                     contextualised_actions,
                 )
-            )
+            ),
+            dim=1,
         )
 
         return torch.nn.functional.one_hot(result, num_classes=self.n_arms).reshape(
