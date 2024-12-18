@@ -1,10 +1,11 @@
 import random
-from typing import Any, Callable, Dict, Generic, Tuple
+from typing import Any, Callable, Dict, Generic
 
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+from ..datasets.base_dataset import AbstractDataset
 from ..trainers.abstract_trainer import AbstractTrainer, BanditType
 from ..utils.abtract_contextualiser import AbstractContextualiser
 
@@ -26,11 +27,8 @@ class BaseEnvironment(Generic[BanditType]):
         self,
         bandit: BanditType,
         trainer: AbstractTrainer[BanditType],
-        dataset: Dataset[Tuple[torch.Tensor, torch.Tensor]],
+        dataset: AbstractDataset,
         contextualiser: AbstractContextualiser | None = None,
-        reward_fn: Callable[
-            [torch.Tensor, torch.Tensor, torch.Tensor], torch.Tensor
-        ] = lambda x, y, z: (x == y).float(),
         seed: int = 42,
         max_steps: int | None = None,
         log_method: Callable[[Dict[str, Any]], None] = lambda x: None,
@@ -39,9 +37,8 @@ class BaseEnvironment(Generic[BanditType]):
         self.dataset = dataset
         self.trainer = trainer
         self.contextualiser = contextualiser
-        self.reward_fn = reward_fn
         self.log = log_method
-        self.max_steps = max_steps or len(dataset)  # type: ignore
+        self.max_steps = max_steps or len(dataset)
         self.seed = seed
 
     def run(self, batch_size: int = 32) -> Dict[str, Any]:
@@ -49,7 +46,7 @@ class BaseEnvironment(Generic[BanditType]):
         Run the bandit algorithm on the given dataset scenario and record metrics.
         """
         seed_all(self.seed)
-        indices = np.arange(len(self.dataset))  # type: ignore
+        indices = np.arange(len(self.dataset))
         np.random.shuffle(indices)
 
         chosen_arms = []
@@ -58,12 +55,10 @@ class BaseEnvironment(Generic[BanditType]):
         cum_reward = 0.0
 
         for t in range(0, self.max_steps, batch_size):
-            context_list, actual_dist_list = [], []
+            context_list = []
 
             for idx in indices[t : t + batch_size]:
-                x, y = self.dataset[idx]
-                context_list.append(x)
-                actual_dist_list.append(y)
+                context_list.append(self.dataset[idx])
 
             contexts = torch.stack(context_list)
             contextualised_actions = (
@@ -71,13 +66,17 @@ class BaseEnvironment(Generic[BanditType]):
                 if self.contextualiser
                 else contexts
             )
-            actual_dist = torch.stack(actual_dist_list)
 
             pred = self.bandit(contextualised_actions)
             arms = torch.argmax(pred, dim=-1).float()
             chosen_arms.append(arms)
 
-            rewards = self.reward_fn(pred, actual_dist, contextualised_actions)
+            rewards = torch.stack(
+                [
+                    self.dataset.reward(idx, action)
+                    for idx, action in zip(indices[t : t + batch_size], arms)
+                ]
+            ).squeeze(1)
             result_rewards.append(rewards)
             self.bandit = self.trainer.update(
                 self.bandit,
@@ -106,7 +105,3 @@ class BaseEnvironment(Generic[BanditType]):
             "final_cumulative_reward": cum_reward,
         }
         return results
-
-
-# Example usage:
-# TODO: Add example usage

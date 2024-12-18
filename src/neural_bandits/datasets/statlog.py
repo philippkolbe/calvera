@@ -1,11 +1,12 @@
 from typing import Tuple
 
 import torch
-from torch.utils.data import Dataset
 from ucimlrepo import fetch_ucirepo
 
+from .base_dataset import AbstractDataset
 
-class StatlogDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
+
+class StatlogDataset(AbstractDataset):
     def __init__(self) -> None:
         dataset = fetch_ucirepo(id=146)
         X = dataset.data.features
@@ -20,5 +21,8 @@ class StatlogDataset(Dataset[Tuple[torch.Tensor, torch.Tensor]]):
     def __len__(self) -> int:
         return len(self.X)
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        return self.X[idx], self.y[idx]
+    def __getitem__(self, idx: int) -> torch.Tensor:
+        return self.X[idx]
+
+    def reward(self, idx: int, action: torch.Tensor) -> torch.Tensor:
+        return torch.tensor(float(self.y[idx] == action + 1), dtype=torch.float32)
